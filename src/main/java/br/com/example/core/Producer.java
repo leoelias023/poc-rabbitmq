@@ -30,8 +30,4 @@ public class Producer {
             queue, message
         );
     }
-
-    public static void close() throws IOException {
-        connection.close();
-    }
 }

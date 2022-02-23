@@ -26,8 +26,4 @@ public class Consumer {
         channel.queueDeclare(queue, RabbitMQConfig.DURABLE, RabbitMQConfig.EXCLUSIVE, RabbitMQConfig.AUTO_DELETE, null);
         channel.basicConsume(queue, true, DefaultConsumer.getInstance());
     }
-
-    public static void close() throws IOException {
-        connection.close();
-    }
 }
