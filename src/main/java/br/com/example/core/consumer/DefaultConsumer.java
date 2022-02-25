@@ -1,6 +1,7 @@
 package br.com.example.core.consumer;
 
 import com.rabbitmq.client.AMQP.BasicProperties;
+import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.ShutdownSignalException;
@@ -11,12 +12,15 @@ import java.util.Objects;
 public class DefaultConsumer implements Consumer {
 
     private static DefaultConsumer instance;
+    private final Channel channel;
 
-    private DefaultConsumer() {};
+    private DefaultConsumer(Channel channel) {
+        this.channel = channel;
+    }
 
-    public static synchronized DefaultConsumer getInstance() {
+    public static synchronized DefaultConsumer getInstance(Channel channel) {
         if (Objects.isNull(instance)) {
-            instance = new DefaultConsumer();
+            instance = new DefaultConsumer(channel);
         }
 
         return instance;
@@ -33,7 +37,7 @@ public class DefaultConsumer implements Consumer {
     }
 
     @Override
-    public void handleCancel(String consumerTag) throws IOException {
+    public void handleCancel(String consumerTag) {
         System.out.println("[CANCEL]");
     }
 
@@ -50,9 +54,13 @@ public class DefaultConsumer implements Consumer {
     @Override
     public void handleDelivery(String consumerTag, Envelope envelope, BasicProperties properties, byte[] body)
         throws IOException {
-        System.out.printf(
-            "[RECEIVE] Exchange: %s | %s%n",
-            envelope.getExchange(), new String(body, StandardCharsets.UTF_8)
-        );
+        try {
+            System.out.printf(
+                "[RECEIVE] Exchange: %s | %s%n",
+                envelope.getExchange(), new String(body, StandardCharsets.UTF_8)
+            );
+        } finally {
+            channel.basicAck(envelope.getDeliveryTag(), false);
+        }
     }
 }

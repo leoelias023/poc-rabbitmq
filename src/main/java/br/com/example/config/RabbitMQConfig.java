@@ -13,4 +13,7 @@ public class RabbitMQConfig {
 
     /** Queue will automatically be deleted if unused. */
     public static boolean AUTO_DELETE = false;
+
+    /** Disabled Auto acknowledgment. */
+    public static boolean AUTO_ACK = false;
 }

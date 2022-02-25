@@ -24,6 +24,6 @@ public class Consumer {
 
     public static void receiveMessage(String queue) throws IOException {
         channel.queueDeclare(queue, RabbitMQConfig.DURABLE, RabbitMQConfig.EXCLUSIVE, RabbitMQConfig.AUTO_DELETE, null);
-        channel.basicConsume(queue, true, DefaultConsumer.getInstance());
+        channel.basicConsume(queue, RabbitMQConfig.AUTO_ACK, DefaultConsumer.getInstance(channel));
     }
 }
